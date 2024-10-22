@@ -1,0 +1,17 @@
+authtoken: 2h8A0YpH4LgZkR0uauzqWol2DvP_2CMQ1c2RZGonmebuanVJ5
+tunnels:
+  postgres:
+    proto: tcp
+    addr: 5432
+  mariadb:
+    proto: tcp
+    addr: 3306
+  frappe:
+    proto: http
+    addr: 8000
+  redis-cache:
+    proto: tcp
+    addr: 6379
+  redis-queue:
+    proto: tcp
+    addr: 6380

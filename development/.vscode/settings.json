@@ -1,0 +1,19 @@
+{
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 3306,
+            "driver": "MariaDB",
+            "name": "solarsquare",
+            "database": "_54cc49b9a1aab38b",
+            "password": "123",
+            "username": "root"
+        }
+    ],
+    "python.defaultInterpreterPath": "${workspaceFolder}/frappe-bench/env/bin/python"
+}
