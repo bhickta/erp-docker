@@ -5,14 +5,14 @@
   },
   {
     "url": "https://github.com/frappe/erpnext.git",
-    "branch": "version-14"
+    "branch": "version-15"
   },
   {
-    "url": "git@github.com:solarsquare/solarsquare.git",
+    "url": "git@bitbucket.org:solar-square-engineering/erp-next.git",
     "branch": "staging"
   },
   {
     "url": "https://github.com/resilient-tech/india-compliance.git",
-    "branch": "version-14"
+    "branch": "version-15"
   }
 ]
