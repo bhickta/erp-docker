@@ -25,15 +25,15 @@ services:
     volumes:
       - mariadb-data:/var/lib/mysql
 
-  mailhog:
-    image: mailhog/mailhog:v1.0.1
-    environment:
-      - MH_STORAGE=maildir
-    volumes:
-      - mailhog-vol:/maildir
-    ports:
-      - 1025:1025
-      - 8025:8025
+  # mailhog:
+  #   image: mailhog/mailhog:v1.0.1
+  #   environment:
+  #     - MH_STORAGE=maildir
+  #   volumes:
+  #     - mailhog-vol:/maildir
+  #   ports:
+  #     - 1025:1025
+  #     - 8025:8025
 
   redis-cache:
     image: docker.io/redis:alpine

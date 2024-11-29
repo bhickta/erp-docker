@@ -8,11 +8,11 @@
     "branch": "version-15"
   },
   {
-    "url": "git@bitbucket.org:solar-square-engineering/erp-next.git",
+    "url": "git@github.com:solarsquare/solarsquare.git",
     "branch": "staging"
   },
   {
     "url": "https://github.com/resilient-tech/india-compliance.git",
-    "branch": "version-15"
+    "branch": "version-14"
   }
 ]
