@@ -56,8 +56,8 @@ def get_args_parser():
         "--site-name",
         action="store",
         type=str,
-        help="Site name, should end with .localhost, default: development.localhost",  # noqa: E501
-        default="development.localhost",
+        help="Site name, should end with .localhost, default: sq",  # noqa: E501
+        default="sq",
     )
     parser.add_argument(
         "-r",
@@ -210,6 +210,9 @@ def create_site_in_bench(args):
             f"--db-host=mariadb",  # Should match the compose service name
             f"--db-type={args.db_type}",  # Add the selected database type
             f"--no-mariadb-socket",
+            f"--db-name=sq",
+            f"--db-password=123",
+            f"--db-username=sq",
             f"--db-root-password=123",  # Replace with your MariaDB password
             f"--admin-password={args.admin_password}",
         ]
