@@ -56,8 +56,8 @@ def get_args_parser():
         "--site-name",
         action="store",
         type=str,
-        help="Site name, should end with .localhost, default: rapl",  # noqa: E501
-        default="rapl",
+        help="Site name, should end with .localhost, default: himpeti",  # noqa: E501
+        default="himpeti",
     )
     parser.add_argument(
         "-r",
