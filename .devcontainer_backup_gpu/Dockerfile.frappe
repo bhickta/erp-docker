@@ -1,0 +1,15 @@
+FROM frappe/bench:latest
+
+USER root
+
+# Install system dependencies (if any)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gnupg \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
+
+USER frappe
+
+# Install Python packages needed by the Frappe service
+# to communicate with the ML worker.
+RUN pip install requests numpy
