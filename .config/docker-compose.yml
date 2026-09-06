@@ -42,17 +42,18 @@ services:
       APPS_JSON: ${APPS_JSON:-}
       SITES_JSON: ${SITES_JSON:-}
       BACKUP_URL: ${BACKUP_URL:-}
-      CODEX_HOME: /opt/host-cli/state/codex
+      # Use Codex's canonical home so the CLI and editor integrations share
+      # one persistent session store across container rebuilds.
+      CODEX_HOME: /home/frappe/.codex
       HOST_CLI_PATH: /home/frappe/.host-cli/bin
       SHELL: /bin/bash
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-1212}
       DB_PASSWORD: ${DB_PASSWORD:-123}
       FRAPPE_API_TOKEN: ${FRAPPE_API_TOKEN:-}
       FRAPPE_BRANCH: ${FRAPPE_BRANCH:-version-16}
-      # Select the matching key from a multi-key host agent. GitHub accepts the
-      # first valid account key, which can otherwise authenticate as the wrong
-      # account and report private repositories as missing.
-      GIT_SSH_COMMAND: ssh -o BatchMode=yes -o IdentitiesOnly=yes -o IdentityFile=/home/frappe/.ssh/git-identity.pub
+      # Keep unattended setup non-interactive while leaving host-specific SSH
+      # routing and identity selection to the mounted host configuration.
+      GIT_SSH_COMMAND: ssh -o BatchMode=yes
       SOURCE_SITE_URL: ${SOURCE_SITE_URL:-}
       SSH_AUTH_SOCK: /run/host-services/ssh-auth.sock
     volumes:
@@ -61,15 +62,20 @@ services:
       - ${HOME}/.cargo/bin:/opt/host-cli/cargo/bin:ro
       - ${HOME}/.local/bin:/opt/host-cli/local/bin:ro
       - ${HOME}/.nvm:/opt/host-cli/nvm:ro
-      - ${HOME}/.codex:/opt/host-cli/state/codex
+      - type: bind
+        source: ${HOST_CODEX_HOME:-${HOME}/.codex}
+        target: /home/frappe/.codex
       - ${HOME}/.tokensave:/opt/host-cli/state/tokensave
-      # Reuse host SSH routing and agent authentication without mounting keys.
-      - ${SSH_AUTH_SOCK:-/dev/null}:/run/host-services/ssh-auth.sock
-      - ${HOME}/.ssh/config:/home/frappe/.ssh/config:ro
-      - ${HOME}/.ssh/known_hosts:/home/frappe/.ssh/known_hosts:ro
-      # A public key lets OpenSSH select its matching private key from the
-      # forwarded agent; the private key itself remains on the host.
-      - ${GIT_IDENTITY_PUBLIC_KEY:-${HOME}/.ssh/bhickta.pem.pub}:/home/frappe/.ssh/git-identity.pub:ro
+      # Preserve host SSH behavior, including aliases, Include files,
+      # certificates, and IdentityFile paths. The tree is read-only; Dev
+      # Containers also forwards the host agent on Linux, macOS, and Windows.
+      - type: bind
+        source: ${HOST_SSH_AUTH_SOCK:-${SSH_AUTH_SOCK:-/dev/null}}
+        target: /run/host-services/ssh-auth.sock
+      - type: bind
+        source: ${HOST_SSH_DIR:-${HOME}/.ssh}
+        target: /home/frappe/.ssh
+        read_only: true
       # Host-built ELF CLIs may require a newer glibc than the image provides.
       - /lib/x86_64-linux-gnu:/opt/host-cli/lib:ro
     working_dir: /workspace/development

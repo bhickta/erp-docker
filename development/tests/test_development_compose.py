@@ -60,23 +60,46 @@ def test_devcontainer_defaults_are_project_agnostic(tmp_path):
     assert config["services"]["frappe"]["environment"]["BACKUP_URL"] == ""
     assert config["services"]["frappe"]["environment"]["FRAPPE_API_TOKEN"] == ""
     assert config["services"]["frappe"]["environment"]["ADMIN_PASSWORD"] == "1212"
+    assert config["services"]["frappe"]["environment"]["CODEX_HOME"] == (
+        "/home/frappe/.codex"
+    )
     assert "SITE_NAME" not in config["services"]["frappe"]["environment"]
     assert config["services"]["frappe"]["environment"]["SOURCE_SITE_URL"] == ""
     assert config["services"]["frappe"]["environment"]["SSH_AUTH_SOCK"] == (
         "/run/host-services/ssh-auth.sock"
     )
     assert config["services"]["frappe"]["environment"]["GIT_SSH_COMMAND"] == (
-        "ssh -o BatchMode=yes -o IdentitiesOnly=yes "
-        "-o IdentityFile=/home/frappe/.ssh/git-identity.pub"
+        "ssh -o BatchMode=yes"
     )
     mount_targets = {
         mount["target"] for mount in config["services"]["frappe"]["volumes"]
     }
-    assert "/home/frappe/.ssh/config" in mount_targets
-    assert "/home/frappe/.ssh/git-identity.pub" in mount_targets
-    assert "/home/frappe/.ssh/known_hosts" in mount_targets
+    assert "/home/frappe/.ssh" in mount_targets
+    assert "/home/frappe/.codex" in mount_targets
     assert "/run/host-services/ssh-auth.sock" in mount_targets
     assert set(config["volumes"]) == {"mariadb-data"}
+
+
+def test_devcontainer_accepts_platform_specific_ssh_paths(tmp_path):
+    config = render_compose_config(
+        tmp_path,
+        {
+            "HOST_CODEX_HOME": "/host/codex",
+            "HOST_SSH_DIR": "/host/ssh",
+            "HOST_SSH_AUTH_SOCK": "/host/agent.sock",
+        },
+    )
+
+    mounts = {
+        mount["target"]: mount
+        for mount in config["services"]["frappe"]["volumes"]
+    }
+    assert mounts["/home/frappe/.ssh"]["source"] == "/host/ssh"
+    assert mounts["/home/frappe/.ssh"]["read_only"] is True
+    assert mounts["/run/host-services/ssh-auth.sock"]["source"] == (
+        "/host/agent.sock"
+    )
+    assert mounts["/home/frappe/.codex"]["source"] == "/host/codex"
 
 
 def test_devcontainer_preserves_compose_startup_command():

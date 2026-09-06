@@ -20,7 +20,7 @@ Each app keeps Bench's `upstream` remote and also gets an `origin` remote that
 fetches all branches, so standard `git switch <branch>` workflows work.
 Before creating Bench, setup checks that every configured app repository and
 branch/tag is accessible non-interactively through the forwarded host SSH agent
-and mounted host SSH configuration. Fixing host Git/SSH access and rebuilding
+and read-only host SSH directory. Fixing host Git/SSH access and rebuilding
 is therefore required before any installation work begins.
 Bench does not start automatically; run it from the container terminal:
 

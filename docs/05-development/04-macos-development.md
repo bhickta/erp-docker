@@ -40,10 +40,12 @@ ssh-add -l
 ssh -T git@github.com
 ```
 
-Compose forwards the agent and mounts host `config`, `known_hosts`, and the
-public key selected by `GIT_IDENTITY_PUBLIC_KEY` read-only. The public key lets
-OpenSSH select the matching identity when the agent contains multiple GitHub
-keys. It never mounts the underlying private key files.
+Compose forwards the agent and mounts the host `~/.ssh` directory read-only,
+so aliases, included configuration, certificates, and per-host identities work
+the same way in the Dev Container. If Docker Desktop does not expose the
+shell's agent socket directly, set
+`HOST_SSH_AUTH_SOCK=/run/host-services/ssh-auth.sock` in `.config/.env`; VS Code
+Dev Containers also forwards the local agent automatically.
 
 ## Clone the shared repository
 

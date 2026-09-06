@@ -354,12 +354,21 @@ bench --site localhost install-app my_app
 ```
 
 Use matching branches for Frappe and its apps. For SSH Git URLs, Compose mounts
-the host SSH `config` and `known_hosts` files read-only and forwards the host
-agent socket. It also mounts the public key selected by
-`GIT_IDENTITY_PUBLIC_KEY` (default: `~/.ssh/bhickta.pem.pub`) so OpenSSH chooses
-the matching identity when the agent contains keys for multiple GitHub
-accounts. Authentication remains in the agent; private key files are not
-mounted. Ensure the required key is visible in `ssh-add -l` before starting.
+the host `~/.ssh` directory read-only and forwards the host agent socket. This
+preserves the host's aliases, included configuration, certificates,
+`IdentityFile` paths, and per-host key selection. Ensure the required key is
+visible in `ssh-add -l` before starting.
+
+The defaults work with a conventional home directory and `SSH_AUTH_SOCK`. Set
+`HOST_SSH_DIR` or `HOST_SSH_AUTH_SOCK` in `.config/.env` when the host exposes
+either at a different path. VS Code Dev Containers automatically forwards the
+local agent on Linux, macOS, and Windows.
+
+The host Codex directory is mounted at the canonical `/home/frappe/.codex`
+path. Authentication, preferences, and saved sessions therefore survive
+container rebuilds and are shared by the Codex CLI and editor integrations.
+Set `HOST_CODEX_HOME` in `.config/.env` only when the host uses a nonstandard
+Codex state directory.
 
 ## Use VS Code Dev Containers
 
@@ -484,8 +493,10 @@ configuration. Use strong credentials on shared networks and never use this
 stack as a production deployment.
 
 GPU access and other private host files are not mounted by the portable
-baseline. SSH routing uses read-only host configuration and authentication is
-forwarded through the agent socket; raw SSH private keys remain on the host.
+baseline. SSH routing uses the read-only host `~/.ssh` tree and authentication
+can use the forwarded agent socket. Because the complete tree is mounted to
+preserve host behavior, only use the Dev Container with trusted workspace
+code.
 Keep backup API tokens in the ignored `.config/.env` file, never in an
 app manifest or committed configuration.
 
