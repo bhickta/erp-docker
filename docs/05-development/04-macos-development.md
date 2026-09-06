@@ -40,8 +40,10 @@ ssh-add -l
 ssh -T git@github.com
 ```
 
-Compose forwards the agent and mounts host `config` and `known_hosts` files
-read-only. It never mounts the underlying private key files.
+Compose forwards the agent and mounts host `config`, `known_hosts`, and the
+public key selected by `GIT_IDENTITY_PUBLIC_KEY` read-only. The public key lets
+OpenSSH select the matching identity when the agent contains multiple GitHub
+keys. It never mounts the underlying private key files.
 
 ## Clone the shared repository
 

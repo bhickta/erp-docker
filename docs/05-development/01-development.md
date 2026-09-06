@@ -355,7 +355,10 @@ bench --site localhost install-app my_app
 
 Use matching branches for Frappe and its apps. For SSH Git URLs, Compose mounts
 the host SSH `config` and `known_hosts` files read-only and forwards the host
-agent socket. Authentication remains in the agent; private key files are not
+agent socket. It also mounts the public key selected by
+`GIT_IDENTITY_PUBLIC_KEY` (default: `~/.ssh/bhickta.pem.pub`) so OpenSSH chooses
+the matching identity when the agent contains keys for multiple GitHub
+accounts. Authentication remains in the agent; private key files are not
 mounted. Ensure the required key is visible in `ssh-add -l` before starting.
 
 ## Use VS Code Dev Containers

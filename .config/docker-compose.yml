@@ -49,7 +49,10 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:-123}
       FRAPPE_API_TOKEN: ${FRAPPE_API_TOKEN:-}
       FRAPPE_BRANCH: ${FRAPPE_BRANCH:-version-16}
-      GIT_SSH_COMMAND: ssh -o IdentitiesOnly=no -o BatchMode=yes
+      # Select the matching key from a multi-key host agent. GitHub accepts the
+      # first valid account key, which can otherwise authenticate as the wrong
+      # account and report private repositories as missing.
+      GIT_SSH_COMMAND: ssh -o BatchMode=yes -o IdentitiesOnly=yes -o IdentityFile=/home/frappe/.ssh/git-identity.pub
       SOURCE_SITE_URL: ${SOURCE_SITE_URL:-}
       SSH_AUTH_SOCK: /run/host-services/ssh-auth.sock
     volumes:
@@ -64,6 +67,9 @@ services:
       - ${SSH_AUTH_SOCK:-/dev/null}:/run/host-services/ssh-auth.sock
       - ${HOME}/.ssh/config:/home/frappe/.ssh/config:ro
       - ${HOME}/.ssh/known_hosts:/home/frappe/.ssh/known_hosts:ro
+      # A public key lets OpenSSH select its matching private key from the
+      # forwarded agent; the private key itself remains on the host.
+      - ${GIT_IDENTITY_PUBLIC_KEY:-${HOME}/.ssh/bhickta.pem.pub}:/home/frappe/.ssh/git-identity.pub:ro
       # Host-built ELF CLIs may require a newer glibc than the image provides.
       - /lib/x86_64-linux-gnu:/opt/host-cli/lib:ro
     working_dir: /workspace/development

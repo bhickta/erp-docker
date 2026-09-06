@@ -65,10 +65,15 @@ def test_devcontainer_defaults_are_project_agnostic(tmp_path):
     assert config["services"]["frappe"]["environment"]["SSH_AUTH_SOCK"] == (
         "/run/host-services/ssh-auth.sock"
     )
+    assert config["services"]["frappe"]["environment"]["GIT_SSH_COMMAND"] == (
+        "ssh -o BatchMode=yes -o IdentitiesOnly=yes "
+        "-o IdentityFile=/home/frappe/.ssh/git-identity.pub"
+    )
     mount_targets = {
         mount["target"] for mount in config["services"]["frappe"]["volumes"]
     }
     assert "/home/frappe/.ssh/config" in mount_targets
+    assert "/home/frappe/.ssh/git-identity.pub" in mount_targets
     assert "/home/frappe/.ssh/known_hosts" in mount_targets
     assert "/run/host-services/ssh-auth.sock" in mount_targets
     assert set(config["volumes"]) == {"mariadb-data"}
